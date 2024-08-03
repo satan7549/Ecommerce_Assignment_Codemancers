@@ -3,8 +3,8 @@ import bcrypt from "bcrypt";
 import UserModel from "../models/user.model";
 import httpStatus from "http-status";
 import sendToken from "../utils/sendToken";
-import sendError from "../utils/sendError";
 import { IUser } from "../types/user";
+import sendResponse from "../utils/sendResponse";
 
 const registerUser = async (
   req: Request,
@@ -15,9 +15,10 @@ const registerUser = async (
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return sendError(
+      return sendResponse(
         res,
         httpStatus.BAD_REQUEST,
+        false,
         "Please provide both email and password"
       );
     }
@@ -41,9 +42,10 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return sendError(
+      return sendResponse(
         res,
         httpStatus.BAD_REQUEST,
+        false,
         "Please provide both email and password"
       );
     }
@@ -53,11 +55,11 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
       "email password role"
     );
 
-
     if (!userExists) {
-      return sendError(
+      return sendResponse(
         res,
         httpStatus.UNAUTHORIZED,
+        false,
         "Invalid email or password"
       );
     }
@@ -66,9 +68,10 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     const isPassword = await userExists.comparePassword(password);
 
     if (!isPassword) {
-      return sendError(
+      return sendResponse(
         res,
         httpStatus.UNAUTHORIZED,
+        false,
         "Invalid email or password"
       );
     }

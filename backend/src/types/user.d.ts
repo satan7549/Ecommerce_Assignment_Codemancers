@@ -10,7 +10,7 @@ export interface IUser extends Document {
 }
 
 // Define a TypeScript interface for the request body
-interface LoginRequestBody {
+export interface LoginRequestBody {
   email: string;
   password: string;
 }

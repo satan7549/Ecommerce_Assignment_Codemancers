@@ -3,9 +3,10 @@ import jwt from "jsonwebtoken";
 import sendError from "../utils/sendError";
 import httpStatus from "http-status";
 import { IUser } from "../types/user";
+import UserModel from "../models/user.model";
 
 // interface for the user in req
-interface IUserRequest extends Request {
+export interface IUserRequest extends Request {
   user?: any;
 }
 
@@ -26,14 +27,20 @@ const isUserAuthenticated = async (
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY as string);
-    req.user = decoded as IUser;
+
+    // Fetch the user from the database
+    const user = await UserModel.findById((decoded as any).id).select(
+      "-password"
+    );
+
+    if (!user) {
+      return sendError(res, httpStatus.UNAUTHORIZED, "User not found.");
+    }
+
+    // Save user inside req.user
+    req.user = user as IUser;
+
     next();
-    // const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY as string) as {
-    //   id: string;
-    // };
-    // // Save user inside req.user
-    // req.user = await userModel.findById(decoded.id);
-    // next();
   } catch (error) {
     return sendError(
       res,
@@ -43,4 +50,15 @@ const isUserAuthenticated = async (
   }
 };
 
-export default isUserAuthenticated;
+const isAdmin = (req: IUserRequest, res: Response, next: NextFunction) => {
+  if (req.user?.role !== "superAdmin") {
+    return sendError(
+      res,
+      httpStatus.FORBIDDEN,
+      "Access denied. You do not have the required permissions."
+    );
+  }
+  next();
+};
+
+export { isUserAuthenticated, isAdmin };

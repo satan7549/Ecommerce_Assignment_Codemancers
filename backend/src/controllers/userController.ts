@@ -1,4 +1,3 @@
-// src/controllers/userController.ts
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import UserModel from "../models/user.model";
@@ -50,9 +49,10 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     // Example of user login
-    const userExists = await UserModel.findOne({ email }).select("password");
+    const userExists = await UserModel.findOne({ email }).select(
+      "email password role"
+    );
 
-    console.log(userExists, "userExists");
 
     if (!userExists) {
       return sendError(

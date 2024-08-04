@@ -11,6 +11,9 @@ import {
   CardFooter,
   Flex,
 } from "@chakra-ui/react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../redux/store";
+import { addToCart } from "../redux/cart/cartActions";
 
 interface ProductProps {
   id: string;
@@ -25,11 +28,12 @@ const Product: React.FC<ProductProps> = ({
   title,
   description,
   image,
-  count = 0,
 }) => {
   const toast = useToast();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleAddToCart = () => {
+    dispatch(addToCart({ id, count: 1 }));
     toast({
       title: "Product Added.",
       description: "The product has been added to your cart.",
@@ -65,26 +69,6 @@ const Product: React.FC<ProductProps> = ({
           >
             ADD to Cart
           </Button>
-          <Flex justifyContent="space-between" alignItems="center">
-            <Button
-              data-cy="product-decrement-cart-item-count-button"
-              colorScheme="teal"
-            >
-              -
-            </Button>
-            <Text as="span" data-cy="product-count">
-              {count}
-            </Text>
-            <Button
-              data-cy="product-increment-cart-item-count-button"
-              colorScheme="teal"
-            >
-              +
-            </Button>
-            {/* <Button data-cy="product-remove-cart-item-button" colorScheme="red">
-              Remove Item
-            </Button> */}
-          </Flex>
         </Flex>
       </CardFooter>
     </Card>

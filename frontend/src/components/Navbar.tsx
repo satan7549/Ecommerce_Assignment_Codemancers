@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Flex, Link, Text, Button } from "@chakra-ui/react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -6,9 +6,18 @@ import { RootState } from "../redux/store";
 import { logout } from "../redux/auth/reducer";
 
 const Navbar: React.FC = () => {
+  // const [totalQuantity, setTotalQuantity] = useState<number>(0);
+
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { items } = useSelector((state: RootState) => state.cart);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const quantity = items.reduce((acc, item) => acc + item.count, 0);
+  //   setTotalQuantity(quantity);
+  // }, [items]);
 
   const handleLoginLogout = () => {
     if (isAuthenticated) {
@@ -28,7 +37,7 @@ const Navbar: React.FC = () => {
         <Flex align="center" gap={4}>
           <Link as={RouterLink} to="/cart" fontSize="lg" fontWeight="bold">
             <Text>
-              Cart <span>(0)</span>
+              Cart <span>{items.length}</span>
             </Text>
           </Link>
           <Button onClick={handleLoginLogout} colorScheme="teal">

@@ -60,7 +60,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
         res,
         httpStatus.UNAUTHORIZED,
         false,
-        "Invalid email or password"
+        "User not found. You need to signup first."
       );
     }
 

@@ -64,11 +64,58 @@ const getCart = async (
       isCheckedOut: false,
     }).populate("items.product");
 
+    if (!cart || cart.items.length === 0) {
+      return sendResponse(
+        res,
+        httpStatus.NOT_FOUND,
+        false,
+        "Cart is empty",
+        []
+      );
+    }
+
+    sendResponse(res, httpStatus.OK, true, "Cart fetched successfully", cart);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Remove item from cart
+const removeFromCart = async (
+  req: IUserRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const { productId } = req.body;
+  const userId = req.user?._id;
+
+  try {
+    const cart = await CartModel.findOne({ user: userId, isCheckedOut: false });
+
     if (!cart) {
       return sendResponse(res, httpStatus.NOT_FOUND, false, "Cart not found");
     }
 
-    sendResponse(res, httpStatus.OK, true, "Cart fetched successfully", cart);
+    // Find the index of the item to remove
+    const itemIndex = cart.items.findIndex(
+      (item) => item.product.toString() === productId.toString()
+    );
+
+    if (itemIndex === -1) {
+      return sendResponse(
+        res,
+        httpStatus.NOT_FOUND,
+        false,
+        "Item not found in cart"
+      );
+    }
+
+    // Remove the item from the cart
+    cart.items.splice(itemIndex, 1);
+
+    await cart.save();
+
+    sendResponse(res, httpStatus.OK, true, "Item removed from cart", cart);
   } catch (error) {
     next(error);
   }
@@ -92,6 +139,7 @@ const checkoutCart = async (
 
     cart.shippingAddress = shippingAddress;
     cart.isCheckedOut = true;
+    cart.items = [];
     await cart.save();
 
     // Send checkout confirmation email
@@ -105,4 +153,4 @@ const checkoutCart = async (
   }
 };
 
-export { addToCart, getCart, checkoutCart };
+export { addToCart, getCart, removeFromCart, checkoutCart };

@@ -23,6 +23,16 @@ const registerUser = async (
       );
     }
     // Check if user already exists
+    const existingUser = await UserModel.findOne({ email });
+    if (existingUser) {
+      return sendResponse(
+        res,
+        httpStatus.CONFLICT,
+        false,
+        "User already exists"
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(password, 5);
 
     const user: IUser = await UserModel.create({
@@ -31,9 +41,9 @@ const registerUser = async (
     });
 
     sendToken(res, httpStatus.CREATED, user);
-  } catch (error) {
+  } catch (error: any) {
     // Pass the error to the error middleware
-    next(error);
+    next(error.message);
   }
 };
 

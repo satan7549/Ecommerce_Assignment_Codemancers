@@ -44,7 +44,7 @@ const addToCart = async (
 
     await cart.save();
 
-    sendResponse(res, httpStatus.OK, true, "Item added to cart", cart);
+    sendResponse(res, httpStatus.CREATED, true, "Item added to cart", cart);
   } catch (error) {
     next(error);
   }

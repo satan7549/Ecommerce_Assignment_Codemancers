@@ -7,9 +7,13 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import Cart from "../pages/Cart";
 import Checkout from "../pages/Checkout";
+import ProductManagement from "../components/ProductManagement";
+import { UserRole } from "../types/user";
 
 const AllRoutes = () => {
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, role } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   return (
     <Routes>
@@ -28,6 +32,10 @@ const AllRoutes = () => {
         path="/checkout"
         element={isAuthenticated ? <Checkout /> : <Navigate to="/login" />}
       />
+
+      {isAuthenticated && role === UserRole.SUPER_ADMIN && (
+        <Route path="/admin/products" element={<ProductManagement />} />
+      )}
     </Routes>
   );
 };

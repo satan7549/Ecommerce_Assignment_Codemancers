@@ -36,10 +36,11 @@ const productSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    addProduct(state, action: PayloadAction<Product>) {
+    // Admin actions
+    adminAddProduct(state, action: PayloadAction<Product>) {
       state.products.push(action.payload);
     },
-    updateProduct(state, action: PayloadAction<Product>) {
+    adminUpdateProduct(state, action: PayloadAction<Product>) {
       const updatedProduct = action.payload;
       const index = state.products.findIndex(
         (product) => product.id === updatedProduct.id
@@ -48,11 +49,11 @@ const productSlice = createSlice({
         state.products[index] = updatedProduct;
       }
     },
-    deleteProduct(state, action: PayloadAction<string>) {
-      state.products = state.products.filter(
-        (product) => product.id !== action.payload
-      );
-    },
+    // adminDeleteProduct(state, action: PayloadAction<string>) {
+    //   state.products = state.products.filter(
+    //     (product) => product.id !== action.payload
+    //   );
+    // },
   },
 });
 
@@ -60,9 +61,9 @@ export const {
   fetchProductsLoading,
   fetchProductsSuccess,
   fetchProductsFail,
-  addProduct,
-  updateProduct,
-  deleteProduct,
+  adminAddProduct,
+  adminUpdateProduct,
+  // adminDeleteProduct,
 } = productSlice.actions;
 
 export default productSlice.reducer;

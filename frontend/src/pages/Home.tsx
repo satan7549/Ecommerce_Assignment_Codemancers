@@ -5,6 +5,7 @@ import { AppDispatch, RootState } from "../redux/store";
 import { Box, SimpleGrid, Text, Heading } from "@chakra-ui/react";
 import { fetchProducts } from "../redux/product/productActions";
 import Product from "../components/Product";
+import Loading from "../components/Loading";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -27,7 +28,8 @@ const Home: React.FC = () => {
     return <Text>Please log in to view products.</Text>;
   }
 
-  if (loading) return <Text>Loading...</Text>;
+  if (loading) return <Loading />;
+
   if (error) return <Text>Error: {error}</Text>;
 
   return (
@@ -35,6 +37,7 @@ const Home: React.FC = () => {
       <Heading as="h2" size="lg" mb={6}>
         Products
       </Heading>
+
       <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={10}>
         {products.map((product) => (
           <Product

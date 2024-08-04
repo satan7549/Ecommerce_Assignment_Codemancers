@@ -7,6 +7,8 @@ import {
   fetchCartLoading,
   fetchCartSuccess,
   fetchCartFail,
+  removeFromCartSuccess,
+  removeFromCartFail,
 } from "./reducer";
 import { AddToCartItem } from "./interface";
 
@@ -48,3 +50,15 @@ export const fetchCart = () => async (dispatch: AppDispatch) => {
     );
   }
 };
+
+export const removeFromCart =
+  (productId: string) => async (dispatch: AppDispatch) => {
+    try {
+      await api.delete("/cart/remove", { data: { productId } });
+      dispatch(removeFromCartSuccess(productId));
+    } catch (error: any) {
+      dispatch(
+        removeFromCartFail(error.response?.data?.message || "An error occurred")
+      );
+    }
+  };

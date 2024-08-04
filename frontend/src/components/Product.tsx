@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Image,
@@ -10,6 +10,7 @@ import {
   Stack,
   CardFooter,
   Flex,
+  Center,
 } from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../redux/store";
@@ -23,16 +24,13 @@ interface ProductProps {
   count?: number;
 }
 
-const Product: React.FC<ProductProps> = ({
-  id,
-  title,
-  description,
-  image,
-}) => {
+const Product: React.FC<ProductProps> = ({ id, title, description, image }) => {
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
   const dispatch = useDispatch<AppDispatch>();
 
   const handleAddToCart = () => {
+    setLoading(true);
     dispatch(addToCart({ id, count: 1 }));
     toast({
       title: "Product Added.",
@@ -41,6 +39,7 @@ const Product: React.FC<ProductProps> = ({
       duration: 5000,
       isClosable: true,
     });
+    setLoading(false);
   };
 
   return (
@@ -49,8 +48,20 @@ const Product: React.FC<ProductProps> = ({
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
+      maxW="sm"
+      boxShadow="md"
+      _hover={{ boxShadow: "lg" }}
+      transition="all 0.2s"
     >
-      <Image src={image} alt={title} boxSize="150px" objectFit="cover" />
+      <Center p="4">
+        <Image
+          src={image}
+          alt={title}
+          boxSize="150px"
+          objectFit="cover"
+          borderRadius="md"
+        />
+      </Center>
       <CardBody>
         <Stack spacing="4">
           <Heading as="h3" size="md" data-cy="product-title">
@@ -66,6 +77,8 @@ const Product: React.FC<ProductProps> = ({
             colorScheme="teal"
             onClick={handleAddToCart}
             mb="4"
+            isLoading={loading}
+            loadingText="Adding..."
           >
             ADD to Cart
           </Button>

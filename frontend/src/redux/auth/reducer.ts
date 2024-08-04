@@ -1,18 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-export interface AuthState {
-  loading: boolean;
-  isAuthenticated: boolean;
-  user: any;
-  token: string | null;
-  error: any;
-}
+import { AuthState } from "../../types/user";
 
 const initialState: AuthState = {
   loading: false,
   isAuthenticated: localStorage.getItem("token") ? true : false,
   user: null,
-  token: null,
+  token: localStorage.getItem("token") || null,
+  role: localStorage.getItem("role") || null,
   error: null,
 };
 
@@ -29,6 +23,10 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.user = action.payload.user;
       state.token = action.payload.token;
+      state.role = action.payload.user.role;
+
+      localStorage.setItem("token", action.payload.token);
+      localStorage.setItem("role", action.payload.user.role);
     },
     loginFail(state, action: PayloadAction<string | null>) {
       state.loading = false;
@@ -44,6 +42,10 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.user = action.payload.user;
       state.token = action.payload.token;
+      state.role = action.payload.user.role; // Set role from signup response
+
+      localStorage.setItem("token", action.payload.token);
+      localStorage.setItem("role", action.payload.user.role);
     },
     signupFail(state, action: PayloadAction<string | null>) {
       state.loading = false;
@@ -52,9 +54,11 @@ const authSlice = createSlice({
     },
     logout(state) {
       localStorage.removeItem("token");
+      localStorage.removeItem("role");
       state.isAuthenticated = false;
       state.user = null;
       state.token = null;
+      state.role = null;
     },
   },
 });

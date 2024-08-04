@@ -6,20 +6,19 @@ import {
   Text,
   Heading,
   Button,
-  Spinner,
   Alert,
   AlertIcon,
   AlertTitle,
   AlertDescription,
   SimpleGrid,
-  Flex,
   VStack,
   HStack,
   Divider,
 } from "@chakra-ui/react";
 import { AppDispatch, RootState } from "../redux/store";
 import { useNavigate } from "react-router-dom";
-import { fetchCart } from "../redux/cart/cartActions";
+import { fetchCart, removeFromCart } from "../redux/cart/cartActions";
+import Loading from "../components/Loading";
 
 const Cart: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -31,6 +30,10 @@ const Cart: React.FC = () => {
   useEffect(() => {
     dispatch(fetchCart());
   }, [dispatch]);
+
+  const handleRemove = (productId: string) => {
+    dispatch(removeFromCart(productId));
+  };
 
   const handleCheckout = () => {
     if (items.length !== 0) {
@@ -47,11 +50,7 @@ const Cart: React.FC = () => {
   const totalQuantity = items.reduce((acc, item) => acc + item.count, 0);
 
   if (loading) {
-    return (
-      <Flex justify="center" align="center" height="100vh">
-        <Spinner size="xl" />
-      </Flex>
-    );
+    return <Loading />;
   }
 
   if (error) {
@@ -127,7 +126,12 @@ const Cart: React.FC = () => {
                 <Text mt="2" textAlign="center">
                   Quantity: {item.count}
                 </Text>
-                <Button colorScheme="red" mt="4" width="full">
+                <Button
+                  colorScheme="red"
+                  mt="4"
+                  width="full"
+                  onClick={() => handleRemove(item.product.id)}
+                >
                   Remove Item
                 </Button>
               </Box>

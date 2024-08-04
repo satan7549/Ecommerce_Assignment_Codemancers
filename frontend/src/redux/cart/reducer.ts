@@ -52,6 +52,15 @@ const cartSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+
+    removeFromCartSuccess(state, action: PayloadAction<string>) {
+      state.items = state.items.filter(
+        (item) => item.product.id !== action.payload
+      );
+    },
+    removeFromCartFail(state, action: PayloadAction<string | null>) {
+      state.error = action.payload;
+    },
     clearCart(state) {
       state.items = [];
     },
@@ -65,6 +74,8 @@ export const {
   fetchCartLoading,
   fetchCartSuccess,
   fetchCartFail,
+  removeFromCartSuccess,
+  removeFromCartFail,
   clearCart,
 } = cartSlice.actions;
 

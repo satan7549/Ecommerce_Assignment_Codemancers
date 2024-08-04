@@ -81,11 +81,7 @@ const getCart = async (
 };
 
 // Remove item from cart
-const removeFromCart = async (
-  req: IUserRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const removeFromCart = async (req: any, res: Response, next: NextFunction) => {
   const { productId } = req.body;
   const userId = req.user?._id;
 

@@ -4,6 +4,7 @@ import ProductModel from "../models/product.model";
 import sendResponse from "../utils/sendResponse";
 import httpStatus from "http-status";
 import { IUserRequest } from "../middleware/user.auth";
+import sendEmail from "../services/sendEmail";
 
 // Add item to cart
 const addToCart = async (
@@ -92,6 +93,11 @@ const checkoutCart = async (
     cart.shippingAddress = shippingAddress;
     cart.isCheckedOut = true;
     await cart.save();
+
+    // Send checkout confirmation email
+    const emailSubject = "Order Confirmation";
+    const emailText = `Thank you for your purchase! Your order has been successfully checked out and will be shipped to ${shippingAddress}.`;
+    await sendEmail(req.user.email, emailSubject, emailText);
 
     sendResponse(res, httpStatus.OK, true, "Checkout successful", cart);
   } catch (error) {

@@ -58,7 +58,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     if (!userExists) {
       return sendResponse(
         res,
-        httpStatus.UNAUTHORIZED,
+        httpStatus.NOT_FOUND,
         false,
         "User not found. You need to signup first."
       );

@@ -1,5 +1,10 @@
 import { Document } from "mongoose";
 
+export enum UserRole {
+  USER = "user",
+  SUPER_ADMIN = "superAdmin",
+}
+
 export interface IUser extends Document {
   email: string;
   password: string;
@@ -14,5 +19,3 @@ export interface LoginRequestBody {
   email: string;
   password: string;
 }
-
-

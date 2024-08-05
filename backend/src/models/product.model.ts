@@ -1,4 +1,3 @@
-// src/models/Product.ts
 import { Schema, model } from "mongoose";
 import { IProduct } from "../types/product";
 

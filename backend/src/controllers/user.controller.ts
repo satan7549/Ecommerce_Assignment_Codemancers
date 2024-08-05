@@ -5,6 +5,8 @@ import httpStatus from "http-status";
 import sendToken from "../utils/sendToken";
 import { IUser } from "../types/user";
 import sendResponse from "../utils/sendResponse";
+import validator from "validator";
+import messages from "../utils/messages";
 
 const registerUser = async (
   req: Request,
@@ -19,17 +21,38 @@ const registerUser = async (
         res,
         httpStatus.BAD_REQUEST,
         false,
-        "Please provide both email and password"
+        messages.PROVIDE_EMAIL_PASSWORD
       );
     }
+
+    // Validate email and password
+    if (!validator.isEmail(email)) {
+      return sendResponse(
+        res,
+        httpStatus.BAD_REQUEST,
+        false,
+        messages.INVALID_EMAIL
+      );
+    }
+
+    if (password.length < 6) {
+      return sendResponse(
+        res,
+        httpStatus.BAD_REQUEST,
+        false,
+        messages.SHORT_PASSWORD
+      );
+    }
+
     // Check if user already exists
     const existingUser = await UserModel.findOne({ email });
+
     if (existingUser) {
       return sendResponse(
         res,
         httpStatus.CONFLICT,
         false,
-        "User already exists"
+        messages.USER_EXISTS
       );
     }
 
@@ -42,8 +65,13 @@ const registerUser = async (
 
     sendToken(res, httpStatus.CREATED, user);
   } catch (error: any) {
-    // Pass the error to the error middleware
-    next(error.message);
+    sendResponse(
+      res,
+      httpStatus.INTERNAL_SERVER_ERROR,
+      false,
+      messages.SERVER_ERROR,
+      error
+    );
   }
 };
 
@@ -56,7 +84,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
         res,
         httpStatus.BAD_REQUEST,
         false,
-        "Please provide both email and password"
+        messages.PROVIDE_EMAIL_PASSWORD
       );
     }
 
@@ -70,7 +98,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
         res,
         httpStatus.NOT_FOUND,
         false,
-        "User not found. You need to signup first."
+        messages.USER_NOT_FOUND
       );
     }
 
@@ -82,14 +110,19 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
         res,
         httpStatus.UNAUTHORIZED,
         false,
-        "Invalid email or password"
+        messages.INVALID_EMAIL_PASSWORD
       );
     }
 
     sendToken(res, httpStatus.OK, userExists);
   } catch (error) {
-    // Pass the error to the error middleware
-    next(error);
+    sendResponse(
+      res,
+      httpStatus.INTERNAL_SERVER_ERROR,
+      false,
+      messages.SERVER_ERROR,
+      error
+    );
   }
 };
 

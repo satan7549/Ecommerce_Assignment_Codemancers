@@ -5,6 +5,7 @@ import sendResponse from "../utils/sendResponse";
 import httpStatus from "http-status";
 import { IUserRequest } from "../middleware/user.auth";
 import sendEmail from "../services/sendEmail";
+import messages from "../utils/messages";
 
 // Add item to cart
 const addToCart = async (
@@ -22,7 +23,7 @@ const addToCart = async (
         res,
         httpStatus.NOT_FOUND,
         false,
-        "Product not found"
+        messages.PRODUCT_NOT_FOUND
       );
     }
 
@@ -44,9 +45,21 @@ const addToCart = async (
 
     await cart.save();
 
-    sendResponse(res, httpStatus.CREATED, true, "Item added to cart", cart);
-  } catch (error) {
-    next(error);
+    sendResponse(
+      res,
+      httpStatus.CREATED,
+      true,
+      messages.ITEM_ADD_TO_CART,
+      cart
+    );
+  } catch (error: any) {
+    sendResponse(
+      res,
+      httpStatus.INTERNAL_SERVER_ERROR,
+      false,
+      error.message,
+      error
+    );
   }
 };
 
@@ -69,14 +82,20 @@ const getCart = async (
         res,
         httpStatus.NOT_FOUND,
         false,
-        "Cart is empty",
+        messages.CART_EMPTY,
         []
       );
     }
 
-    sendResponse(res, httpStatus.OK, true, "Cart fetched successfully", cart);
-  } catch (error) {
-    next(error);
+    sendResponse(res, httpStatus.OK, true, messages.FETCH, cart);
+  } catch (error: any) {
+    sendResponse(
+      res,
+      httpStatus.INTERNAL_SERVER_ERROR,
+      false,
+      error.message,
+      error
+    );
   }
 };
 
@@ -89,7 +108,12 @@ const removeFromCart = async (req: any, res: Response, next: NextFunction) => {
     const cart = await CartModel.findOne({ user: userId, isCheckedOut: false });
 
     if (!cart) {
-      return sendResponse(res, httpStatus.NOT_FOUND, false, "Cart not found");
+      return sendResponse(
+        res,
+        httpStatus.NOT_FOUND,
+        false,
+        messages.CART_NOT_FOUND
+      );
     }
 
     // Find the index of the item to remove
@@ -102,7 +126,7 @@ const removeFromCart = async (req: any, res: Response, next: NextFunction) => {
         res,
         httpStatus.NOT_FOUND,
         false,
-        "Item not found in cart"
+        messages.ITEM_NOT_FOUND_CART
       );
     }
 
@@ -111,9 +135,15 @@ const removeFromCart = async (req: any, res: Response, next: NextFunction) => {
 
     await cart.save();
 
-    sendResponse(res, httpStatus.OK, true, "Item removed from cart", cart);
-  } catch (error) {
-    next(error);
+    sendResponse(res, httpStatus.OK, true, messages.ITEM_REMOVED_CART, cart);
+  } catch (error: any) {
+    sendResponse(
+      res,
+      httpStatus.INTERNAL_SERVER_ERROR,
+      false,
+      error.message,
+      error
+    );
   }
 };
 
@@ -130,7 +160,12 @@ const checkoutCart = async (
     const cart = await CartModel.findOne({ user: userId, isCheckedOut: false });
 
     if (!cart) {
-      return sendResponse(res, httpStatus.NOT_FOUND, false, "Cart not found");
+      return sendResponse(
+        res,
+        httpStatus.NOT_FOUND,
+        false,
+        messages.CART_NOT_FOUND
+      );
     }
 
     cart.shippingAddress = shippingAddress;
@@ -139,13 +174,19 @@ const checkoutCart = async (
     await cart.save();
 
     // Send checkout confirmation email
-    const emailSubject = "Order Confirmation";
-    const emailText = `Thank you for your purchase! Your order has been successfully checked out and will be shipped to ${shippingAddress}.`;
+    const emailSubject = messages.ORDER_CONFIRMATION;
+    const emailText = messages.THANK_YOU_PURCHASE(shippingAddress);
     await sendEmail(req.user.email, emailSubject, emailText);
 
-    sendResponse(res, httpStatus.OK, true, "Checkout successful", cart);
-  } catch (error) {
-    next(error);
+    sendResponse(res, httpStatus.OK, true, messages.CHECKOUT_SUCCESS, cart);
+  } catch (error: any) {
+    sendResponse(
+      res,
+      httpStatus.INTERNAL_SERVER_ERROR,
+      false,
+      error.message,
+      error
+    );
   }
 };
 

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import sendResponse from "../utils/sendResponse";
 import httpStatus from "http-status";
 import productModel from "../models/product.model";
+import messages from "../utils/messages";
 
 // Create a new product
 const createProduct = async (req: Request, res: Response) => {
@@ -12,23 +13,22 @@ const createProduct = async (req: Request, res: Response) => {
       res,
       httpStatus.BAD_REQUEST,
       false,
-      "All fields are required"
+      messages.ALL_FIELDS_REQUIRED
     );
   }
 
   try {
     const newProduct = new productModel({ title, description, price, image });
     await newProduct.save();
+    sendResponse(res, httpStatus.CREATED, true, messages.CREATED, newProduct);
+  } catch (error: any) {
     sendResponse(
       res,
-      httpStatus.CREATED,
-      true,
-      "Product created successfully",
-      newProduct
+      httpStatus.INTERNAL_SERVER_ERROR,
+      false,
+      error.message,
+      error
     );
-  } catch (err: any) {
-    console.log(err);
-    sendResponse(res, httpStatus.INTERNAL_SERVER_ERROR, false, err.message);
   }
 };
 
@@ -36,15 +36,15 @@ const createProduct = async (req: Request, res: Response) => {
 const getAllProduct = async (req: Request, res: Response) => {
   try {
     const products = await productModel.find();
+    sendResponse(res, httpStatus.OK, true, messages.FETCH, products);
+  } catch (error: any) {
     sendResponse(
       res,
-      httpStatus.OK,
-      true,
-      "Products fetched successfully",
-      products
+      httpStatus.INTERNAL_SERVER_ERROR,
+      false,
+      error.message,
+      error
     );
-  } catch (err: any) {
-    sendResponse(res, httpStatus.INTERNAL_SERVER_ERROR, false, err.message);
   }
 };
 
@@ -57,7 +57,7 @@ const getProductById = async (req: Request, res: Response) => {
       res,
       httpStatus.BAD_REQUEST,
       false,
-      "Product ID is required"
+      messages.PRODUCT_ID_REQUIRED
     );
   }
 
@@ -69,19 +69,19 @@ const getProductById = async (req: Request, res: Response) => {
         res,
         httpStatus.NOT_FOUND,
         false,
-        "Product not found"
+        messages.PRODUCT_NOT_FOUND
       );
     }
 
+    sendResponse(res, httpStatus.OK, true, messages.FETCH, product);
+  } catch (error: any) {
     sendResponse(
       res,
-      httpStatus.OK,
-      true,
-      "Product fetched successfully",
-      product
+      httpStatus.INTERNAL_SERVER_ERROR,
+      false,
+      error.message,
+      error
     );
-  } catch (err: any) {
-    sendResponse(res, httpStatus.INTERNAL_SERVER_ERROR, false, err.message);
   }
 };
 
@@ -95,7 +95,7 @@ const updateProduct = async (req: Request, res: Response) => {
       res,
       httpStatus.BAD_REQUEST,
       false,
-      "Product ID is required"
+      messages.PRODUCT_ID_REQUIRED
     );
   }
 
@@ -111,7 +111,7 @@ const updateProduct = async (req: Request, res: Response) => {
         res,
         httpStatus.NOT_FOUND,
         false,
-        "Product not found"
+        messages.PRODUCT_NOT_FOUND
       );
     }
 
@@ -119,11 +119,17 @@ const updateProduct = async (req: Request, res: Response) => {
       res,
       httpStatus.OK,
       true,
-      "Product updated successfully",
+      messages.UPDATE_SUCCESS,
       updatedProduct
     );
-  } catch (err: any) {
-    sendResponse(res, httpStatus.INTERNAL_SERVER_ERROR, false, err.message);
+  } catch (error: any) {
+    sendResponse(
+      res,
+      httpStatus.INTERNAL_SERVER_ERROR,
+      false,
+      error.message,
+      error
+    );
   }
 };
 

@@ -2,6 +2,11 @@
 
 This project is an eCommerce application where users can log in, manage products, and handle carts and checkouts. The application has distinct roles for super admins and regular users.
 
+## Deployment
+
+- **Backend**: [https://ecommerce-assignment-codemancers-backnd.onrender.com/](https://ecommerce-assignment-codemancers-backnd.onrender.com/)
+- **Frontend**: [https://ecommerce-assignment-codemancers-frontend.vercel.app/](https://ecommerce-assignment-codemancers-frontend.vercel.app/)
+
 ## Technologies Used
 
 - **Backend**:
@@ -41,10 +46,6 @@ This project is an eCommerce application where users can log in, manage products
 - **Email Notifications**:
   - An email is sent to the user after a successful cart checkout.
 
-## Deployment
-
-- **Backend**: [https://ecommerce-assignment-codemancers-backnd.onrender.com/](https://ecommerce-assignment-codemancers-backnd.onrender.com/)
-- **Frontend**: [https://ecommerce-assignment-codemancers-frontend.vercel.app/](https://ecommerce-assignment-codemancers-frontend.vercel.app/)
 
 ## Installation
 

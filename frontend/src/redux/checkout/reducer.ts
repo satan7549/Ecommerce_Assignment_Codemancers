@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface CheckoutState {
   loading: boolean;
-  checkoutData: any; 
+  checkoutData: any;
   error: any;
 }
 

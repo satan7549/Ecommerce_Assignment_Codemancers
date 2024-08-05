@@ -4,6 +4,7 @@ import {
   FormControl,
   Heading,
   Input,
+  Select,
   VStack,
   useToast,
 } from "@chakra-ui/react";
@@ -12,20 +13,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AppDispatch, RootState } from "../redux/store";
 import { signup } from "../redux/auth/authActions";
+import { UserRole } from "../types/user";
 
 interface SignupDetails {
   email: string;
   password: string;
+  role: UserRole;
 }
 
 const initState: SignupDetails = {
   email: "",
   password: "",
+  role: UserRole.USER,
 };
 
 const Signup: React.FC = () => {
   const [signupDetails, setSignupDetails] = useState<SignupDetails>(initState);
-  const { email, password } = signupDetails;
+  const { email, password, role } = signupDetails;
 
   const authData = useSelector((state: RootState) => state.auth);
   const { loading, isAuthenticated, user, error } = authData;
@@ -34,9 +38,11 @@ const Signup: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ): void => {
     const { name, value } = e.target;
-    setSignupDetails({ ...signupDetails, [name]: value });
+    setSignupDetails({ ...signupDetails, [name]: value as UserRole });
   };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>): void => {
@@ -137,6 +143,19 @@ const Signup: React.FC = () => {
             required
           />
         </FormControl>
+        <FormControl p={2}>
+          <Select
+            name="role"
+            value={role}
+            onChange={handleChange}
+            placeholder="Select Role"
+            borderRadius="lg"
+            focusBorderColor="teal.100"
+          >
+            <option value={UserRole.USER}>User</option>
+            <option value={UserRole.SUPER_ADMIN}>Super Admin</option>
+          </Select>
+        </FormControl>
 
         <FormControl>
           <Button
@@ -178,4 +197,5 @@ const Signup: React.FC = () => {
     </Container>
   );
 };
+
 export default Signup;

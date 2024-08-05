@@ -8,6 +8,7 @@ import {
   signupSuccess,
   signupFail,
 } from "./reducer";
+import { baseURL } from "../../utils/axios-service";
 
 export const login =
   (loginDetails: { email: string; password: string }) =>
@@ -15,10 +16,7 @@ export const login =
     dispatch(loginLoading());
     dispatch(loginFail(null));
     try {
-      const response = await axios.post(
-        "https://ecommerce-assignment-codemancers-backnd.onrender.com/user/login",
-        loginDetails
-      );
+      const response = await axios.post(`${baseURL}/user/login`, loginDetails);
       dispatch(loginSuccess(response.data));
 
       // Store token in local storage
@@ -35,7 +33,7 @@ export const signup =
     dispatch(signupFail(null));
     try {
       const response = await axios.post(
-        "https://ecommerce-assignment-codemancers-backnd.onrender.com/user/register",
+        `${baseURL}/user/register`,
         signupDetails
       );
       console.log("response:-", response);

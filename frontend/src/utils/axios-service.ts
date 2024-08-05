@@ -1,9 +1,12 @@
 import axios from "axios";
 
+export const baseURL = "https://ecommerce-assignment-codemancers-backnd.onrender.com";
+
+// export const baseURL = "http://localhost:8080";
+
 // Create an Axios instance
 const api = axios.create({
-  baseURL: "https://ecommerce-assignment-codemancers-backnd.onrender.com",
-  //   baseURL: "http://localhost:8080",
+  baseURL,
 });
 
 // Interceptor to add token to headers

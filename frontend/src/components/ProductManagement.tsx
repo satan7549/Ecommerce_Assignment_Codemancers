@@ -46,7 +46,7 @@ const ProductManagement: React.FC = () => {
   const handleAddProduct = async () => {
     await dispatch(adminAddProductAction(currentProduct));
     resetForm();
-    await dispatch(fetchProducts()); // Fetch updated products
+    await dispatch(fetchProducts()); 
     onClose();
   };
 
@@ -54,7 +54,7 @@ const ProductManagement: React.FC = () => {
     if (currentProduct.id) {
       dispatch(adminUpdateProductAction(currentProduct));
       resetForm();
-      dispatch(fetchProducts()); // Fetch updated products
+      dispatch(fetchProducts()); 
       onClose();
     }
   };

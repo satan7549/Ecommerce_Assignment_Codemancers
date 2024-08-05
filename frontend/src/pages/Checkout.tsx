@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AppDispatch, RootState } from "../redux/store";
-// import { checkoutOrder, clearCheckoutState } from '../redux/checkout/checkoutSlice';
 import {
   Box,
   Button,

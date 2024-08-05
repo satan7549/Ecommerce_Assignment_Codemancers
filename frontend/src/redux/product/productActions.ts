@@ -7,7 +7,7 @@ import {
   Product,
   adminAddProduct,
   adminUpdateProduct,
-//   adminDeleteProduct,
+  //   adminDeleteProduct,
 } from "./reducer";
 
 export const fetchProducts = () => async (dispatch: AppDispatch) => {
